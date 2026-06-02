@@ -1,8 +1,13 @@
 # PHP runtime হিসেবে অফিশিয়াল ইমেজ ব্যবহার
 FROM php:8.1-apache
 
-# সার্ভারের ভেতরের প্যাকেজ লিস্ট আপডেট করা এবং unzip টুলটি ইনস্টল করা
-RUN apt-get update && apt-get install -y unzip
+# সার্ভারের ভেতরের প্যাকেজ লিস্ট আপডেট করা, unzip এবং ডেটাবেজ লাইব্রেরি ইনস্টল করা
+RUN apt-get update && apt-get install -y \
+    unzip \
+    libpq-dev
+
+# পিএইচপির জন্য PDO MySQL এবং PDO PostgreSQL ড্রাইভার ইনস্টল ও অ্যাক্টিভ করা
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
 
 # গিটহাব থেকে সব ফাইল কনটেইনারে কপি করা
 COPY . /var/www/html/
