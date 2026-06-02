@@ -1,0 +1,1 @@
+<?php // Render PHP detector
