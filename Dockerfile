@@ -4,10 +4,11 @@ FROM php:8.1-apache
 # সার্ভারের ভেতরের প্যাকেজ লিস্ট আপডেট করা, unzip এবং ডেটাবেজ লাইব্রেরি ইনস্টল করা
 RUN apt-get update && apt-get install -y \
     unzip \
-    libpq-dev
+    libpq-dev \
+    libsqlite3-dev
 
-# পিএইচপির জন্য PDO MySQL এবং PDO PostgreSQL ড্রাইভার ইনস্টল ও অ্যাক্টিভ করা
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
+# প্রয়োজনীয় পিএইচপি এক্সটেনশন ইনস্টল ও অ্যাক্টিভ করা
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql pdo_sqlite
 
 # গিটহাব থেকে সব ফাইল কনটেইনারে কপি করা
 COPY . /var/www/html/
@@ -17,8 +18,9 @@ RUN unzip -o phpnuxbill-master.zip && \
     mv phpnuxbill-master/* . && \
     rm -rf phpnuxbill-master phpnuxbill-master.zip
 
-# ফাইল পারমিশন সেট করা
-RUN chown -R www-data:www-data /var/www/html/
+# ডাটাবেজ ফাইল রাখার জন্য একটি ফাঁকা ফাইল তৈরি ও পারমিশন দেওয়া
+RUN touch /var/www/html/system/storage/database.sqlite && \
+    chown -R www-data:www-data /var/www/html/
 
 # Apache সার্ভার চালু করা
 CMD ["apache2-foreground"]
